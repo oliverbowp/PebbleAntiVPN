@@ -11,15 +11,16 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 import org.json.JSONObject;
+import pebbleantivpn.JSON.BungeeLoader;
+import pebbleantivpn.JSON.BungeeSaver;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 
 public final class PebbleAntiVPNBungeeCord extends Plugin implements Listener {
 
-    HashMap<String, JSONObject> IPInfo = new HashMap<>();
+    public static JSONObject IPs = new JSONObject();
     String BlockMessage;
     String lastBlockMessage;
     static boolean ConsoleFilter;
@@ -52,12 +53,22 @@ public final class PebbleAntiVPNBungeeCord extends Plugin implements Listener {
             e.printStackTrace();
         }
         new PebbleAntiVPNLoggerBungee().registerFilter();
+        try {
+            BungeeLoader.loadJSONData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         getLogger().info(translate("&aLoaded &6PebbleAntiVPN"));
     }
 
     @Override
     public void onDisable() {
         getLogger().info(translate("&6PebbleAntiVPN &cHas Been Unloaded"));
+        try {
+            BungeeSaver.saveJSONData();
+        } catch (IOException e) {
+            getLogger().warning(translate("&cFailed to save JSON data!"));
+        }
     }
 
     @EventHandler
@@ -66,13 +77,13 @@ public final class PebbleAntiVPNBungeeCord extends Plugin implements Listener {
 
         JSONObject object = getIPInfo(IP);
 
-        if (String.valueOf(object.get("proxy")).equals("true")) {
+        if (object.getBoolean("proxy")) {
             e.getConnection().disconnect(new TextComponent(translate(BlockMessage)));
         }
     }
 
     public JSONObject getIPInfo(String IP) throws IOException {
-        if (IPInfo.containsKey(IP)) return IPInfo.get(IP);
+        if (!IPs.isNull(IP)) return IPs.getJSONObject(IP);
         InputStream inputStream;
         URL url = new URL("http://ip-api.com/json/" + IP + "?fields=country,proxy");
         HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -90,8 +101,8 @@ public final class PebbleAntiVPNBungeeCord extends Plugin implements Listener {
             response.append(currentLine);
         in.close();
         JSONObject object = new JSONObject(response.toString());
-        IPInfo.put(IP, object);
-        if(String.valueOf(object.get("proxy")).equals("true"))
+        IPs.put(IP, object);
+        if(object.getBoolean("proxy"))
             getLogger().info(translate("&bIP &a" + IP + " &bis a VPN/Proxy from &a" + (object.get("country"))));
         return object;
     }

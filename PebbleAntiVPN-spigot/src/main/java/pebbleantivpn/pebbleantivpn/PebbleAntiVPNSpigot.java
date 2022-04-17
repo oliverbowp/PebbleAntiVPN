@@ -10,6 +10,8 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+import pebbleantivpn.pebbleantivpn.JSON.SpigotLoader;
+import pebbleantivpn.pebbleantivpn.JSON.SpigotSaver;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,11 +19,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 
 public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
 
-    HashMap<String, JSONObject> IPInfo = new HashMap<>();
+    public static JSONObject IPs = new JSONObject();
     String BlockMessage;
     String lastBlockMessage;
     static boolean ConsoleFilter;
@@ -40,7 +41,11 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
         reload();
 
         new PebbleAntiVPNLoggerSpigot().registerFilter();
-
+        try {
+            SpigotLoader.loadJSONData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         sendConsoleMessage(translate("&aLoaded &6PebbleAntiVPN"));
 
     }
@@ -48,6 +53,11 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         sendConsoleMessage(translate("&6PebbleAntiVPN &cHas Been Unloaded"));
+        try {
+            SpigotSaver.saveJSONData();
+        } catch (IOException e) {
+            getLogger().warning(translate("&cFailed to save JSON data!"));
+        }
     }
 
     @EventHandler
@@ -56,7 +66,7 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
 
         JSONObject object = getIPInfo(IP);
 
-        if(String.valueOf(object.get("proxy")).equals("true")) e.disallow(PlayerLoginEvent.Result.KICK_BANNED, translate(BlockMessage));
+        if (object.getBoolean("proxy")) e.disallow(PlayerLoginEvent.Result.KICK_BANNED, translate(BlockMessage));
     }
 
     public void sendConsoleMessage(String message) {
@@ -68,7 +78,7 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
     }
 
     public JSONObject getIPInfo(String IP) throws IOException {
-        if (IPInfo.containsKey(IP)) return IPInfo.get(IP);
+        if (!IPs.isNull(IP)) return IPs.getJSONObject(IP);
         InputStream inputStream;
         URL url = new URL("http://ip-api.com/json/" + IP + "?fields=country,proxy");
         HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -86,26 +96,47 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
             response.append(currentLine);
         in.close();
         JSONObject object = new JSONObject(response.toString());
-        IPInfo.put(IP, object);
-        if(String.valueOf(object.get("proxy")).equals("true"))
+        IPs.put(IP, object);
+        if (object.getBoolean("proxy"))
             sendConsoleMessage(translate("&bIP &a" + IP + " &bis a VPN/Proxy from &a" + (object.get("country"))));
         return object;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender s, Command cmd, @NotNull String label, String[] args) {
-        if(cmd.getName().equalsIgnoreCase("aurora")) {
+        if (cmd.getName().equalsIgnoreCase("pav")) {
             if (!(s instanceof Player)) {
-                if(args.length == 1) {
+                if (args.length > 0) {
                     if (args[0].equalsIgnoreCase("reload")) {
                         s.sendMessage("§eReloading...");
                         reload();
                         s.sendMessage("§aReloaded The Config.");
+                    } else if (args[0].equalsIgnoreCase("whitelist")) {
+                        if (args.length != 3) {
+                            s.sendMessage("§cInvalid arguments (Whitelist <add/remove>)");
+                            return true;
+                        }
+                        if (args[1].equalsIgnoreCase("add")) {
+                            if (!IPs.isNull(args[2]))
+                                IPs.getJSONObject(args[2]).remove("proxy");
+
+                            JSONObject to = new JSONObject();
+                            to.put("proxy", false);
+                            IPs.put(args[2], to);
+                            s.sendMessage("§aWhitelisted §e" + args[2] + " §7This IP will not be checked while connecting.");
+                        } else if (args[1].equalsIgnoreCase("remove")) {
+                            if (!IPs.isNull(args[2]))
+                                IPs.remove(args[2]);
+
+                            s.sendMessage("§aUnWhitelisted §e" + args[2] + " §7This IP will be checked while connecting.");
+                        } else {
+                            s.sendMessage("§cInvalid arguments (Whitelist <add/remove>)");
+                        }
                     } else {
-                        s.sendMessage("§cInvalid arguments (Reload)");
+                        s.sendMessage("§cInvalid arguments (Reload/Whitelist)");
                     }
                 } else {
-                    s.sendMessage("§cInvalid arguments (Reload)");
+                    s.sendMessage("§cInvalid arguments (Reload/Whitelist)");
                 }
             } else {
                 s.sendMessage("§cThis command can only be executed in console.");
@@ -119,11 +150,12 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
         this.BlockMessage = getConfig().getString("block-message");
         ConsoleFilter = getConfig().getBoolean("console-filter");
 
-        if(!lastBlockMessage.equals(BlockMessage)) sendConsoleMessage(translate("\n&eChanged block message from\n" + lastBlockMessage + "\n&eTo\n" + BlockMessage));
-        if(!this.lastConsoleFilter == ConsoleFilter) {
+        if (!lastBlockMessage.equals(BlockMessage))
+            sendConsoleMessage(translate("\n&eChanged block message from\n" + lastBlockMessage + "\n&eTo\n" + BlockMessage));
+        if (!this.lastConsoleFilter == ConsoleFilter) {
             String To;
             String From;
-            if(ConsoleFilter) {
+            if (ConsoleFilter) {
                 To = "&aTrue";
                 From = "&cFalse";
             } else {
@@ -136,5 +168,4 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
         this.lastBlockMessage = BlockMessage;
         this.lastConsoleFilter = ConsoleFilter;
     }
-
 }
