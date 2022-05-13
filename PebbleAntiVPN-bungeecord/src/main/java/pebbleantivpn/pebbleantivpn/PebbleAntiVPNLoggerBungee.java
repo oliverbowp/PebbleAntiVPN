@@ -10,7 +10,7 @@ import static pebbleantivpn.pebbleantivpn.PebbleAntiVPNBungeeCord.ConsoleFilter;
 public class PebbleAntiVPNLoggerBungee {
 
     public void registerFilter() {
-        if (ProxyServer.getInstance().getVersion().contains("Waterfall")) {
+        if (!ProxyServer.getInstance().getVersion().contains("BungeeCord")) {
             new PebbleAntiVPNLoggerBungeeLog4J().registerFilter();
         } else {
             Logger logger = ProxyServer.getInstance().getLogger();
