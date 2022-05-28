@@ -3,7 +3,7 @@ package pebbleantivpn.pebbleantivpn;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -22,6 +22,8 @@ public final class PebbleAntiVPNBungeeCord extends Plugin implements Listener {
 
     public static JSONObject IPs = new JSONObject();
     String BlockMessage;
+    String BypassPerm;
+    String lastBypassPerm;
     String lastBlockMessage;
     static boolean ConsoleFilter;
     boolean lastConsoleFilter;
@@ -40,11 +42,13 @@ public final class PebbleAntiVPNBungeeCord extends Plugin implements Listener {
                 Configuration config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
                 config.set("block-message", "&6PebbleAntiVPN%nl%&cProxy/VPN Detected.");
                 config.set("console-filter", true);
+                config.set("bypass-permission", "pav.bypass");
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, file);
             }
             Configuration config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
             this.lastBlockMessage = config.getString("block-message");
             this.lastConsoleFilter = config.getBoolean("console-filter");
+            this.lastBypassPerm = config.getString("bypass-permission");
             reload();
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, file);
 
@@ -72,14 +76,18 @@ public final class PebbleAntiVPNBungeeCord extends Plugin implements Listener {
     }
 
     @EventHandler
-    public void onConnect(LoginEvent e) throws IOException {
-        String IP = e.getConnection().getSocketAddress().toString().split(":")[0].replace("/", "");
+    public void onConnect2(PostLoginEvent e) throws IOException {
+        if (e.getPlayer().hasPermission(BypassPerm))
+            return;
+
+        String IP = e.getPlayer().getSocketAddress().toString().split(":")[0].replace("/", "");
 
         JSONObject object = getIPInfo(IP);
 
         if (object.getBoolean("proxy")) {
-            e.getConnection().disconnect(new TextComponent(translate(BlockMessage)));
+            e.getPlayer().disconnect(new TextComponent(translate(BlockMessage)));
         }
+
     }
 
     public JSONObject getIPInfo(String IP) throws IOException {
@@ -113,9 +121,13 @@ public final class PebbleAntiVPNBungeeCord extends Plugin implements Listener {
             Configuration config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, file);
             this.BlockMessage = config.getString("block-message");
+            this.BypassPerm = config.getString("bypass-permission");
             ConsoleFilter = config.getBoolean("console-filter");
 
-            if(!lastBlockMessage.equals(BlockMessage)) getLogger().info(translate("\n&eChanged block message from\n" + lastBlockMessage + "\n&eTo\n" + BlockMessage));
+            if(!lastBlockMessage.equals(BlockMessage))
+                getLogger().info(translate("\n&eChanged block message from\n" + lastBlockMessage + "\n&eTo\n" + BlockMessage));
+            if(!lastBypassPerm.equals(BypassPerm))
+                getLogger().info(translate("\n&eChanged bypass permission from\n" + lastBypassPerm + "\n&eTo\n" + BypassPerm));
             if(!this.lastConsoleFilter == ConsoleFilter) {
                 String To;
                 String From;
@@ -131,6 +143,7 @@ public final class PebbleAntiVPNBungeeCord extends Plugin implements Listener {
 
             this.lastBlockMessage = BlockMessage;
             this.lastConsoleFilter = ConsoleFilter;
+            this.lastBypassPerm = BypassPerm;
         } catch (IOException e) {
             getLogger().warning("§cAn error has occurred while reloading the config!\n§bInfo:\n");
             e.printStackTrace();

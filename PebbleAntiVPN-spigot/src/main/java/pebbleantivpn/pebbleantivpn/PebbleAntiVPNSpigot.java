@@ -24,7 +24,9 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
 
     public static JSONObject IPs = new JSONObject();
     String BlockMessage;
+    String BypassPerm;
     String lastBlockMessage;
+    String lastBypassPerm;
     static boolean ConsoleFilter;
     boolean lastConsoleFilter;
 
@@ -38,6 +40,7 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
 
         this.lastBlockMessage = getConfig().getString("block-message");
         this.lastConsoleFilter = getConfig().getBoolean("console-filter");
+        this.lastBypassPerm = getConfig().getString("bypass-permission");
         reload();
 
         new PebbleAntiVPNLoggerSpigot().registerFilter();
@@ -62,6 +65,10 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onConnect(PlayerLoginEvent e) throws IOException {
+
+        if (e.getPlayer().hasPermission(BypassPerm))
+            return;
+
         String IP = e.getAddress().getHostAddress();
 
         JSONObject object = getIPInfo(IP);
@@ -148,10 +155,13 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
     public void reload() {
         reloadConfig();
         this.BlockMessage = getConfig().getString("block-message");
+        this.BypassPerm = getConfig().getString("bypass-permission");
         ConsoleFilter = getConfig().getBoolean("console-filter");
 
         if (!lastBlockMessage.equals(BlockMessage))
             sendConsoleMessage(translate("\n&eChanged block message from\n" + lastBlockMessage + "\n&eTo\n" + BlockMessage));
+        if (!lastBypassPerm.equals(BypassPerm))
+            sendConsoleMessage(translate("\n&eChanged bypass permission from\n" + lastBypassPerm + "\n&eTo\n" + BypassPerm));
         if (!this.lastConsoleFilter == ConsoleFilter) {
             String To;
             String From;
@@ -167,5 +177,6 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin implements Listener {
 
         this.lastBlockMessage = BlockMessage;
         this.lastConsoleFilter = ConsoleFilter;
+        this.lastBypassPerm = BypassPerm;
     }
 }

@@ -23,6 +23,11 @@ public class PebbleAntiVPNLoggerBungee {
 
     public static boolean logMessage(String message) {
         if(!ConsoleFilter) return true;
+        if(message.contains("Event ConnectionInitEvent(remoteAddress=")) return false;
+        if(message.contains("disconnected with: ")) return false;
+        if(message.contains("No client connected for pending server!")) return false;
+        if(message.contains(" <-> ServerConnector")) return false;
+        if(message.contains("-> UpstreamBridge has disconnected")) return false;
         return !message.contains(" <-> InitialHandler");
     }
 
