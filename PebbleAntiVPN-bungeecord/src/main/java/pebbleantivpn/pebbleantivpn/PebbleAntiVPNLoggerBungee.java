@@ -27,6 +27,7 @@ public class PebbleAntiVPNLoggerBungee {
         if(message.contains("disconnected with: ")) return false;
         if(message.contains("No client connected for pending server!")) return false;
         if(message.contains(" <-> ServerConnector")) return false;
+        if(message.contains("PostLoginEvent") && message.contains("pebbleantivpn")) return false;
         if(message.contains("-> UpstreamBridge has disconnected")) return false;
         return !message.contains(" <-> InitialHandler");
     }

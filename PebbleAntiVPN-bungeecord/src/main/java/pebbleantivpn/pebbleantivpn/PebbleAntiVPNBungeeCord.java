@@ -76,7 +76,7 @@ public final class PebbleAntiVPNBungeeCord extends Plugin implements Listener {
     }
 
     @EventHandler
-    public void onConnect2(PostLoginEvent e) throws IOException {
+    public void onConnect(PostLoginEvent e) throws IOException {
         if (e.getPlayer().hasPermission(BypassPerm))
             return;
 
