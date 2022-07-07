@@ -8,12 +8,14 @@ import org.apache.logging.log4j.core.LifeCycle;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
-
-import static pebbleantivpn.pebbleantivpn.PebbleAntiVPNSpigot.ConsoleFilter;
+import pebbleantivpn.data.SpigotHandler;
 
 public class PebbleAntiVPNLoggerSpigot implements Filter {
 
-    public void registerFilter() {
+    private final SpigotHandler handler;
+
+    public PebbleAntiVPNLoggerSpigot(PebbleAntiVPNSpigot plugin) {
+        this.handler = plugin.getHandler();
         ((Logger) LogManager.getRootLogger()).addFilter(this);
     }
 
@@ -119,7 +121,7 @@ public class PebbleAntiVPNLoggerSpigot implements Filter {
     }
 
     public Result logMessage(String message) {
-        if(!ConsoleFilter) return Result.NEUTRAL;
+        if (!(boolean) this.handler.getConfig("console-filter", false)) return Result.NEUTRAL;
         if (message.contains("lost connection")) {
             return Result.DENY;
         }

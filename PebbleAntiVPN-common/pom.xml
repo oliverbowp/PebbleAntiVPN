@@ -7,20 +7,11 @@
     <parent>
         <groupId>PebbleAntiVPN</groupId>
         <artifactId>PebbleAntiVPN</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
     </parent>
 
     <artifactId>PebbleAntiVPN-common</artifactId>
     <packaging>jar</packaging>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20171018</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>

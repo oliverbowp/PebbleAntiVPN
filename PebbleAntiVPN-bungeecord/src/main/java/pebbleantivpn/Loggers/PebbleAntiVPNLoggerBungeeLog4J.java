@@ -1,4 +1,4 @@
-package pebbleantivpn.pebbleantivpn;
+package pebbleantivpn.Loggers;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -8,12 +8,16 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 
-import static pebbleantivpn.pebbleantivpn.PebbleAntiVPNLoggerBungee.logMessage;
-
 public class PebbleAntiVPNLoggerBungeeLog4J implements Filter {
 
-    public Result checkMessage(String message) {
-        if(logMessage(message)) {
+    private final PebbleAntiVPNLoggerBungee filter;
+
+    public PebbleAntiVPNLoggerBungeeLog4J(PebbleAntiVPNLoggerBungee filter) {
+        this.filter = filter;
+    }
+
+    private Result checkMessage(String message) {
+        if(this.filter.logMessage(message)) {
             return Result.NEUTRAL;
         }
         return Result.DENY;
