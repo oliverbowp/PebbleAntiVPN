@@ -23,6 +23,7 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin {
     public void onEnable() {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
+        getServer().getConsoleSender().sendMessage("§eLoading §6PebbleAntiVPN§e...");
         this.handler = new SpigotHandler(this);
         this.spigotAlert = new MainAlert(this);
         this.webhook = new WebhookAlert(this);
@@ -31,6 +32,7 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerLogin(this), this);
         getServer().getPluginManager().registerEvents(new PlayerQuit(this), this);
         Objects.requireNonNull(getCommand("pav")).setExecutor(new SpigotCommands(this));
+        getServer().getConsoleSender().sendMessage("§6PebbleAntiVPN §bHas Been Loaded.");
     }
 
     @Override

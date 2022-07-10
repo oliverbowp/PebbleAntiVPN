@@ -18,6 +18,7 @@ public final class PebbleAntiVPNBungeeCord extends Plugin {
 
     @Override
     public void onEnable() {
+        getLogger().info("§eLoading §6PebbleAntiVPN§e...");
         this.handler = new BungeeHandler(this);
         this.bungeeAlert = new MainAlert(this);
         this.webhook = new WebhookAlert(this);
@@ -26,6 +27,7 @@ public final class PebbleAntiVPNBungeeCord extends Plugin {
         getProxy().getPluginManager().registerListener(this, new Disconnect(this));
         getProxy().getPluginManager().registerCommand(this, new BungeeCommands(this));
         new PebbleAntiVPNLoggerBungee(this);
+        getLogger().info("§6PebbleAntiVPN §bHas Been Loaded.");
     }
 
     @Override
