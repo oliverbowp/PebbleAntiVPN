@@ -42,11 +42,11 @@ public class PostLogin implements Listener {
             country = this.handler.getData("details." + dataIP + ".country.name").toString();
             countryCode = this.handler.getData("details." + dataIP + ".country.name").toString();
 
-            e.getPlayer().disconnect(new TextComponent(this.handler.getConfig("block-message", true).toString().replace("%IP%", IP).replace("%player%", name).replace("%time%", dtf.format(now)).replace("%country%", country).replace("%countryCode%", countryCode)));
+            e.getPlayer().disconnect(new TextComponent(this.handler.getConfig("block-message", true).toString().replace("%ip%", IP).replace("%player%", name).replace("%time%", dtf.format(now)).replace("%country%", country).replace("%countryCode%", countryCode)));
         } else if ((boolean) this.handler.getConfig("blocked-countries.enabled", false)) {
             country = this.handler.getData("details." + dataIP + ".country.name").toString();
             countryCode = this.handler.getData("details." + dataIP + ".country.name").toString();
-            String kickMessage = this.handler.getConfig("blocked-countries.kick-message", true).toString().replace("%IP%", IP).replace("%player%", name).replace("%time%", dtf.format(now)).replace("%country%", country).replace("%countryCode%", countryCode);
+            String kickMessage = this.handler.getConfig("blocked-countries.kick-message", true).toString().replace("%ip%", IP).replace("%player%", name).replace("%time%", dtf.format(now)).replace("%country%", country).replace("%countryCode%", countryCode);
 
             List<?> BlockedCountries = this.handler.getList("blocked-countries.countries");
             if (BlockedCountries.contains(this.handler.getData("details." + dataIP + ".country.name")))

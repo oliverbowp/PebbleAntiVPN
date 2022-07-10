@@ -4,6 +4,7 @@ import pebbleantivpn.BungeeAlerts.MainAlert;
 import pebbleantivpn.BungeeAlerts.WebhookAlert;
 import pebbleantivpn.Loggers.PebbleAntiVPNLoggerBungee;
 import pebbleantivpn.data.BungeeHandler;
+import pebbleantivpn.events.Disconnect;
 import pebbleantivpn.events.PostLogin;
 
 
@@ -22,6 +23,7 @@ public final class PebbleAntiVPNBungeeCord extends Plugin {
         this.webhook = new WebhookAlert(this);
         this.proxyChecker = new BungeeProxyChecker(this);
         getProxy().getPluginManager().registerListener(this, new PostLogin(this));
+        getProxy().getPluginManager().registerListener(this, new Disconnect(this));
         getProxy().getPluginManager().registerCommand(this, new BungeeCommands(this));
         new PebbleAntiVPNLoggerBungee(this);
     }

@@ -47,9 +47,9 @@ public class WebhookAlert {
     private DiscordWebhooks.EmbedObject getEmbed(String IP, String player, String country, String countryCode, String time) {
         DiscordWebhooks.EmbedObject embed = new DiscordWebhooks.EmbedObject();
         if ((boolean) this.handler.getWebhook("discord-webhook.embed.title.enabled"))
-            embed.setTitle(this.handler.getWebhook("discord-webhook.embed.title.text").toString().replace("%IP%", IP).replace("%player%", player).replace("%time%", time).replace("%country%", country).replace("%countryCode%", countryCode));
+            embed.setTitle(this.handler.getWebhook("discord-webhook.embed.title.text").toString().replace("%ip%", IP).replace("%player%", player).replace("%time%", time).replace("%country%", country).replace("%countryCode%", countryCode));
         if ((boolean) this.handler.getWebhook("discord-webhook.embed.description.enabled"))
-            embed.setDescription(this.handler.getWebhook("discord-webhook.embed.description.text").toString().replace("%IP%", IP).replace("%player%", player).replace("%time%", time).replace("%country%", country).replace("%countryCode%", countryCode));
+            embed.setDescription(this.handler.getWebhook("discord-webhook.embed.description.text").toString().replace("%ip%", IP).replace("%player%", player).replace("%time%", time).replace("%country%", country).replace("%countryCode%", countryCode));
 
         if ((boolean) this.handler.getWebhook("discord-webhook.embed.color.random")) {
             embed.setColor(generateRandomColor());
@@ -77,7 +77,7 @@ public class WebhookAlert {
             String iconURL = null;
             if ((boolean) this.handler.getWebhook("discord-webhook.embed.footer.icon.enabled"))
                 iconURL = this.handler.getWebhook("discord-webhook.embed.footer.icon.url").toString().replace("%ip%", IP).replace("%player%", player).replace("%country%", country).replace("%countryCode%", countryCode);
-            embed.setFooter(this.handler.getWebhook("discord-webhook.embed.footer.text").toString().replace("%IP%", IP).replace("%player%", player).replace("%time%", time).replace("%country%", country).replace("%countryCode%", countryCode), iconURL);
+            embed.setFooter(this.handler.getWebhook("discord-webhook.embed.footer.text").toString().replace("%ip%", IP).replace("%player%", player).replace("%time%", time).replace("%country%", country).replace("%countryCode%", countryCode), iconURL);
         }
         if ((boolean) this.handler.getWebhook("discord-webhook.embed.thumbnail.enabled"))
             embed.setThumbnail(this.handler.getWebhook("discord-webhook.embed.thumbnail.icon").toString().replace("%ip%", IP).replace("%player%", player).replace("%country%", country).replace("%countryCode%", countryCode));

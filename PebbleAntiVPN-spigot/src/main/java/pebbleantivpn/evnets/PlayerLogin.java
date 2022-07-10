@@ -42,16 +42,16 @@ public class PlayerLogin implements Listener {
             country = this.handler.getData("details." + dataIP + ".country.name").toString();
             countryCode = this.handler.getData("details." + dataIP + ".country.name").toString();
 
-            e.disallow(PlayerLoginEvent.Result.KICK_BANNED, this.handler.getConfig("block-message", true).toString().replace("%IP%", IP).replace("%player%", name).replace("%time%", dtf.format(now)).replace("%country%", country).replace("%countryCode%", countryCode));
+            e.disallow(PlayerLoginEvent.Result.KICK_BANNED, this.handler.getConfig("block-message", true).toString().replace("%ip%", IP).replace("%player%", name).replace("%time%", dtf.format(now)).replace("%country%", country).replace("%countryCode%", countryCode));
         } else if ((boolean) this.handler.getConfig("blocked-countries.enabled", false)) {
             country = this.handler.getData("details." + dataIP + ".country.name").toString();
             countryCode = this.handler.getData("details." + dataIP + ".country.name").toString();
             List<?> BlockedCountries = this.handler.getList("blocked-countries.countries");
 
             if (BlockedCountries.contains(this.handler.getData("details." + dataIP + ".country.name")))
-                e.disallow(PlayerLoginEvent.Result.KICK_BANNED, this.handler.getConfig("blocked-countries.kick-message", true).toString().replace("%IP%", IP).replace("%player%", name).replace("%time%", dtf.format(now)).replace("%country%", country).replace("%countryCode%", countryCode));
+                e.disallow(PlayerLoginEvent.Result.KICK_BANNED, this.handler.getConfig("blocked-countries.kick-message", true).toString().replace("%ip%", IP).replace("%player%", name).replace("%time%", dtf.format(now)).replace("%country%", country).replace("%countryCode%", countryCode));
             else if (BlockedCountries.contains(this.handler.getData("details." + dataIP + ".country.code"))) {
-                e.disallow(PlayerLoginEvent.Result.KICK_BANNED, this.handler.getConfig("blocked-countries.kick-message", true).toString().replace("%IP%", IP).replace("%player%", name).replace("%time%", dtf.format(now)).replace("%country%", country).replace("%countryCode%", countryCode));
+                e.disallow(PlayerLoginEvent.Result.KICK_BANNED, this.handler.getConfig("blocked-countries.kick-message", true).toString().replace("%ip%", IP).replace("%player%", name).replace("%time%", dtf.format(now)).replace("%country%", country).replace("%countryCode%", countryCode));
             }
         } else if ((boolean) this.handler.getConfig("users-per-ip.enabled", false)) {
             int max = (int) this.handler.getConfig("users-per-ip.limit", false);

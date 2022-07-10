@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("all")
 public class BungeeHandler {
 
     private Configuration config;
