@@ -1,11 +1,13 @@
 package pebbleantivpn.pebbleantivpn;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import pebbleantivpn.SpigotAlerts.MainAlert;
 import pebbleantivpn.SpigotAlerts.WebhookAlert;
+import pebbleantivpn.bedrock.SpigotFloodgateProvider;
 import pebbleantivpn.data.SpigotHandler;
-import pebbleantivpn.evnets.PlayerLogin;
-import pebbleantivpn.evnets.PlayerQuit;
+import pebbleantivpn.events.PlayerLogin;
+import pebbleantivpn.events.PlayerQuit;
 
 import java.util.Objects;
 
@@ -15,6 +17,7 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin {
     private SpigotProxyChecker proxyChecker;
     private WebhookAlert webhook;
     private MainAlert spigotAlert;
+    private SpigotFloodgateProvider floodgateProvider;
     private boolean isEnabled = true;
 
     // Thanks to Justinnn#0001 for assisting me with the new features.
@@ -28,6 +31,9 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin {
         this.spigotAlert = new MainAlert(this);
         this.webhook = new WebhookAlert(this);
         this.proxyChecker = new SpigotProxyChecker(this);
+        if (Bukkit.getPluginManager().getPlugin("Floodgate") != null) {
+            this.floodgateProvider = new SpigotFloodgateProvider(this);
+        }
         new PebbleAntiVPNLoggerSpigot(this);
         getServer().getPluginManager().registerEvents(new PlayerLogin(this), this);
         getServer().getPluginManager().registerEvents(new PlayerQuit(this), this);
@@ -55,6 +61,8 @@ public final class PebbleAntiVPNSpigot extends JavaPlugin {
     public MainAlert getSpigotAlert() {
         return this.spigotAlert;
     }
+
+    public SpigotFloodgateProvider getFloodgateProvider() {return this.floodgateProvider;}
 
     public void togglePlugin() {
         this.isEnabled = !this.isEnabled;

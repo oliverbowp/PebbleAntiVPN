@@ -3,6 +3,8 @@ version: '${project.version}'
 main: pebbleantivpn.pebbleantivpn.PebbleAntiVPNSpigot
 authors: [ Binkie ]
 description: High quality free AntiVPN.
+softdepend:
+  - Floodgate
 commands:
   pav:
     description: Main Command For PebbleAntiVPN

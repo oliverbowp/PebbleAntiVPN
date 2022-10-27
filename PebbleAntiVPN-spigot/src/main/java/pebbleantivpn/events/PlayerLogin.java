@@ -1,5 +1,6 @@
-package pebbleantivpn.evnets;
+package pebbleantivpn.events;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -15,6 +16,8 @@ import java.util.List;
 
 public class PlayerLogin implements Listener {
 
+    private final static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+
     private final SpigotProxyChecker proxyChecker;
     private final PebbleAntiVPNSpigot main;
     private final SpigotHandler handler;
@@ -27,13 +30,22 @@ public class PlayerLogin implements Listener {
 
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent e) throws IOException {
-        if (!this.main.isPluginEnabled() || e.getPlayer().hasPermission(this.handler.getConfig("bypass-permission", false).toString()))
+        Player player = e.getPlayer();
+
+        if (!this.main.isPluginEnabled() || player.hasPermission(this.handler.getConfig("bypass-permission", false).toString()))
+            return;
+
+        if (this.handler.getConfig().getStringList("bypass-list-lower-case").contains(player.getName().toLowerCase()))
+            return;
+
+        if (this.main.getConfig().getBoolean("floodgate.bypass-bedrock-players", false)
+                && this.main.getFloodgateProvider() != null
+                && this.main.getFloodgateProvider().isBedrockPlayer(player))
             return;
 
         String IP = e.getAddress().getHostAddress();
         String dataIP = IP.replace(".", "_");
-        String name = e.getPlayer().getName();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        String name = player.getName();
         LocalDateTime now = LocalDateTime.now();
         String country;
         String countryCode;

@@ -1,6 +1,9 @@
 block-message: '&6PebbleAntiVPN%nl%&cProxy/VPN Detected.'
 console-filter: true
 bypass-permission: pav.bypass
+bypass-list-lower-case:
+  - "notch"
+  - "dinnerbone"
 users-per-ip:
   enabled: false
   limit: 3
@@ -18,3 +21,5 @@ alerts:
     enabled: true
     permission: pav.alert
     message: '&e%player% &bwas discovered to be using a VPN/Proxy, IP: &e%ip%'
+floodgate:
+  bypass-bedrock-players: false

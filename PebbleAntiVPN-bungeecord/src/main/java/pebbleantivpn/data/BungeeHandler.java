@@ -96,6 +96,10 @@ public class BungeeHandler {
         return file;
     }
 
+    public Configuration getConfig() {
+        return this.config;
+    }
+
     public Object getConfig(String key, boolean translate) {
         if (this.config.get(key) != null) {
             if (translate)

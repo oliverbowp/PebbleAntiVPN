@@ -1,6 +1,7 @@
 package pebbleantivpn.data;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import pebbleantivpn.pebbleantivpn.PebbleAntiVPNSpigot;
@@ -47,6 +48,10 @@ public class SpigotHandler {
     public void writeData(String key, Object value) throws IOException {
         this.data.set(key, value);
         this.data.save(getDataFile());
+    }
+
+    public Configuration getConfig() {
+        return this.config;
     }
 
     public Object getConfig(String key, boolean translate) {
